@@ -3,52 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بساتين - المتجر المتكامل</title>
+    <title>بساتين - الفخامة الطازجة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f9fbf7; margin: 0; padding-bottom: 20px; }
-        .sticky-header { position: sticky; top: 0; background: white; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; }
-        .logo-small { width: 120px; height: auto; border-radius: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; }
-        .prod-box { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; font-size: 13px; font-weight: bold; }
-        .btn-wa { background: #25D366; color: white; border: none; padding: 5px; width: 100%; border-radius: 5px; margin-top: 5px; font-size: 11px; cursor: pointer; }
-        .cat-title { font-size: 16px; color: #166534; padding: 15px 10px 5px; font-weight: bold; border-bottom: 2px solid #e2e8f0; margin-top: 10px; }
+        body { font-family: 'Almarai', sans-serif; background-color: #f4f7f2; margin: 0; padding: 0; }
+        
+        /* البانر العلوي (الأخضر والأبيض) */
+        .hero-header { 
+            background-color: #166534; 
+            padding: 40px 20px; 
+            text-align: center; 
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .fancy-text { 
+            font-size: 60px; 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
+        }
+
+        /* شريط التنقل */
+        .navbar { position: sticky; top: 0; background: white; padding: 15px; display: flex; justify-content: space-around; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-link { color: #166534; font-weight: bold; text-decoration: none; }
+
+        /* المنتجات */
+        .product-section { padding: 40px 20px; border-bottom: 1px solid #e0e0e0; }
+        .category-title { font-size: 28px; font-weight: bold; color: #166534; margin: 30px 0; text-align: center; letter-spacing: 2px; }
+        .product-card { background: white; margin-bottom: 40px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .product-name { font-size: 24px; padding: 25px; text-align: center; font-weight: 700; }
+        .wa-btn { display: block; width: 90%; margin: 0 auto 20px; padding: 20px; background-color: #25D366; color: white; text-align: center; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; }
+        
+        /* الصورة في الأسفل */
+        .footer-img { width: 100%; max-width: 400px; display: block; margin: 40px auto; border-radius: 20px; }
     </style>
 </head>
 <body>
 
-<div class="sticky-header">
-    <img src="https://i.top4top.io/p_3823lll7f0.png" class="logo-small">
+<div class="hero-header">
+    <div class="fancy-text">بـسـاتـيـن</div>
 </div>
 
-<div id="main-content"></div>
+<nav class="navbar">
+    <a href="#fruits" class="nav-link">الفواكه</a>
+    <a href="#veggies" class="nav-link">الخضروات</a>
+    <a href="https://wa.me/96598523539" class="nav-link">تواصل معنا</a>
+</nav>
+
+<div id="fruits"><div class="category-title">فواكه طازجة</div></div>
+<div id="fruit-list"></div>
+
+<div id="veggies"><div class="category-title">خضروات عضوية</div></div>
+<div id="veggie-list"></div>
+
+<img src="https://i.top4top.io/p_3823lll7f0.png" class="footer-img" alt="بساتين">
 
 <script>
-    const data = {
-        "الفواكه": ["موز 🍌", "تفاح 🍎", "برتقال 🍊", "مانجو 🥭", "فراولة 🍓", "كيوي 🥝", "عنب 🍇", "رمان 🍎", "خوخ 🍑", "أناناس 🍍", "بطيخ 🍉", "كرز 🍒", "إجاص 🍐", "تين 🍏", "توت 🫐"],
-        "الخضروات": ["طماطم 🍅", "خيار 🥒", "جزر 🥕", "خس 🥬", "بصل 🧅", "ثوم 🧄", "فلفل 🫑", "بروكلي 🥦", "بطاطس 🥔", "كوسة 🥒", "باذنجان 🍆", "ذرة 🌽", "فجل 🥕", "ملفوف 🥬", "بقدونس 🌿"]
-    };
+    const fruits = ["موز ذهبي 🍌", "تفاح أحمر 🍎", "برتقال عصير 🍊", "مانجو استوائي 🥭", "فراولة ملكية 🍓", "كيوي منعش 🥝", "عنب فاخر 🍇", "رمان طائفي 🍎", "خوخ طري 🍑", "أناناس ناضج 🍍", "بطيخ بارد 🍉", "كرز طازج 🍒", "إجاص فاخر 🍐", "تين طري 🍏", "توت بري 🫐"];
+    const veggies = ["طماطم المزرعة 🍅", "خيار مقرمش 🥒", "جزر طازج 🥕", "خس طازج 🥬", "بصل أحمر 🧅", "ثوم بلدي 🧄", "فلفل بارد 🫑", "بروكلي طازج 🥦", "بطاطس جبلية 🥔", "كوسة طرية 🥒", "باذنجان أسود 🍆", "ذرة حلوة 🌽", "فجل أحمر 🥕", "ملفوف أخضر 🥬", "بقدونس طازج 🌿"];
 
-    const container = document.getElementById('main-content');
-    
-    for (let cat in data) {
-        container.innerHTML += `<div class="cat-title">${cat}</div>`;
-        let grid = document.createElement('div');
-        grid.className = 'grid';
-        data[cat].forEach(item => {
-            grid.innerHTML += `
-                <div class="prod-box">
-                    <div>${item}</div>
-                    <button class="btn-wa" onclick="send('${item}')">طلب 💬</button>
+    function render(list, id) {
+        const container = document.getElementById(id);
+        list.forEach(item => {
+            container.innerHTML += `
+                <div class="product-section">
+                    <div class="product-card">
+                        <div class="product-name">${item}</div>
+                        <a href="https://wa.me/96598523539?text=مرحباً، أود طلب ${item} من بساتين، بانتظار تأكيدكم.." class="wa-btn">طلب عبر واتساب 💬</a>
+                    </div>
                 </div>
             `;
         });
-        container.appendChild(grid);
     }
 
-    function send(item) {
-        let msg = `مرحباً، أود طلب ${item} من متجر بساتين، بانتظار تأكيدكم..🌿`;
-        window.open(`https://wa.me/96598523539?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+    render(fruits, 'fruit-list');
+    render(veggies, 'veggie-list');
 </script>
 </body>
 </html>
