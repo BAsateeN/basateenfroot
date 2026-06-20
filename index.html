@@ -2,201 +2,76 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بساتين - الفخامة المتكاملة</title>
+    <title>بساتين | الأناقة الطازجة</title>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* تعريف الألوان الفخمة: الأخضر الزيتي والذهبي */
-        :root { 
-            --olive-dark: #3e4d22; 
-            --olive-light: #556b2f; 
-            --gold-accent: #c5a059; 
-            --bg-color: #fdfdf5;
-            --white: #ffffff;
-        }
-
-        body { 
-            font-family: 'Almarai', sans-serif; 
-            background-color: var(--bg-color); 
-            margin: 0; 
-            padding: 0;
-            padding-bottom: 150px; /* مساحة لشريط الطلب */
-        }
-
-        /* الهيدر والبصمة البصرية */
-        .header-container { 
-            background-color: var(--olive-dark); 
-            padding: 40px 20px; 
-            text-align: center; 
-            color: var(--white);
-            border-bottom: 5px solid var(--gold-accent);
-        }
-
-        .main-title { 
-            font-size: 50px; 
-            font-weight: bold; 
-            margin: 0;
-        }
-
-        .banner-rect { 
-            width: 90%; 
-            max-width: 600px; 
-            display: block; 
-            margin: 25px auto; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            border: 2px solid var(--gold-accent);
-        }
-
-        /* شريط التنقل الثابت */
-        .sticky-nav { 
-            position: sticky; 
-            top: 0; 
-            background: var(--white); 
-            padding: 15px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
-            z-index: 1000; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-
-        .nav-btn { 
-            padding: 12px 25px; 
-            border-radius: 30px; 
-            border: 2px solid var(--olive-light); 
-            color: var(--olive-light); 
-            font-weight: bold; 
-            cursor: pointer; 
-            background: var(--white); 
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn.active { 
-            background: var(--olive-light); 
-            color: var(--white); 
-        }
-
-        /* بطاقات المنتجات الكبيرة */
-        .product-list { padding: 20px; }
-        
-        .product-card { 
-            background: var(--white); 
-            margin: 20px auto; 
-            width: 90%; 
-            max-width: 500px; 
-            padding: 35px; 
-            border-radius: 20px; 
-            text-align: center; 
-            border: 3px solid transparent; 
-            transition: all 0.4s ease; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
-            font-size: 24px; 
-            font-weight: 700;
-            color: var(--olive-dark);
-        }
-
-        .product-card.selected { 
-            border-color: var(--gold-accent); 
-            background: #fdf9e7; 
-            transform: scale(1.02);
-        }
-
-        /* شريط إتمام الطلب */
-        #cart-bar { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            background: var(--olive-light); 
-            color: var(--white); 
-            text-align: center; 
-            padding: 25px; 
-            font-size: 22px; 
-            font-weight: bold; 
-            display: none; 
-            cursor: pointer; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-            z-index: 2000;
-        }
-
-        /* فواصل إضافية لزيادة طول الكود وفخامة التصفح */
-        .footer-space { height: 50px; }
+        :root { --olive: #556b2f; --gold: #c5a059; }
+        body { font-family: 'Almarai', sans-serif; background-color: #fdfdf5; }
+        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-<body>
+<body class="pb-32">
 
-    <header class="header-container">
-        <h1 class="main-title">بـسـاتـيـن</h1>
-    </header>
+<div id="root"></div>
 
-    <img src="https://i.top4top.io/p_3823lll7f0.png" class="banner-rect" alt="بساتين">
+<script type="module">
+    import React, { useState } from 'https://esm.sh/react';
+    import ReactDOM from 'https://esm.sh/react-dom';
+    const { motion, AnimatePresence } = window.framerMotion;
 
-    <nav class="sticky-nav" id="nav-bar"></nav>
+    const items = [
+        {n: "موز ذهبي 🍌", c: "فواكه"}, {n: "تفاح أحمر 🍎", c: "فواكه"}, {n: "برتقال عصير 🍊", c: "فواكه"},
+        {n: "مانجو ملكي 🥭", c: "فواكه"}, {n: "طماطم طازجة 🍅", c: "خضروات"}, {n: "خيار مقرمش 🥒", c: "خضروات"},
+        {n: "صندوق الضيافة 🎁", c: "صناديق"}, {n: "صندوق العيد 🎊", c: "صناديق"}
+    ];
 
-    <main id="content" class="product-list"></main>
+    function App() {
+        const [selected, setSelected] = useState([]);
+        const [filter, setFilter] = useState("الكل");
 
-    <div id="cart-bar" onclick="sendOrder()">إتمام الطلب (0) 🛒</div>
-
-    <script>
-        // مصفوفة تحتوي على 50 صنفاً موزعاً
-        const store = {
-            "فواكه": Array.from({length: 20}, (_, i) => `فـاكهة بساتين ${i+1} 🍎`),
-            "خضروات": Array.from({length: 20}, (_, i) => `خـضار بساتين ${i+1} 🥦`),
-            "صناديق": Array.from({length: 10}, (_, i) => `صندوق الفخامة ${i+1} 🎁`)
+        const toggleItem = (name) => {
+            setSelected(prev => prev.includes(name) ? prev.filter(i => i !== name) : [...prev, name]);
         };
 
-        let selectedItems = [];
+        return (
+            <div className="flex flex-col items-center">
+                <header className="w-full bg-[#556b2f] text-white text-center py-8 shadow-xl">
+                    <motion.h1 initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl font-bold">بـسـاتـيـن</motion.h1>
+                </header>
+                
+                <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} src="https://i.top4top.io/p_3823lll7f0.png" className="w-4/5 max-w-md my-6 rounded-2xl shadow-2xl border-2 border-[#c5a059]" />
 
-        function initStore() {
-            const nav = document.getElementById('nav-bar');
-            Object.keys(store).forEach((cat, idx) => {
-                nav.innerHTML += `<button class="nav-btn ${idx==0?'active':''}" onclick="renderCategory('${cat}', this)">${cat}</button>`;
-            });
-            renderCategory('فواكه');
-        }
+                <div className="sticky top-0 z-50 flex gap-2 p-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg mb-4">
+                    {["الكل", "فواكه", "خضروات", "صناديق"].map(cat => (
+                        <button key={cat} onClick={() => setFilter(cat)} className={`px-5 py-2 rounded-full font-bold transition ${filter === cat ? 'bg-[#556b2f] text-white' : 'text-[#556b2f]'}`}>{cat}</button>
+                    ))}
+                </div>
 
-        function renderCategory(cat, btn) {
-            if(btn) {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
-            const content = document.getElementById('content');
-            content.innerHTML = '';
-            
-            store[cat].forEach(item => {
-                let div = document.createElement('div');
-                div.className = `product-card ${selectedItems.includes(item)?'selected':''}`;
-                div.innerText = item;
-                div.onclick = function() {
-                    this.classList.toggle('selected');
-                    if(this.classList.contains('selected')) {
-                        selectedItems.push(item);
-                    } else {
-                        selectedItems = selectedItems.filter(i => i !== item);
-                    }
-                    updateCartBar();
-                };
-                content.appendChild(div);
-            });
-        }
+                <div className="w-full px-4">
+                    <AnimatePresence>
+                        {items.filter(i => filter === "الكل" || i.c === filter).map((item, idx) => (
+                            <motion.div key={item.n} layout initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ delay: idx * 0.05 }}
+                                onClick={() => toggleItem(item.n)}
+                                className={`product-card w-full p-8 mb-4 rounded-3xl text-center font-bold text-xl shadow-lg border-4 ${selected.includes(item.n) ? 'border-[#c5a059] bg-[#fdf9e7] scale-105' : 'border-transparent bg-white'}`}>
+                                {item.n}
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
 
-        function updateCartBar() {
-            const bar = document.getElementById('cart-bar');
-            if(selectedItems.length > 0) {
-                bar.style.display = 'block';
-                bar.innerText = `إتمام الطلب (${selectedItems.length}) 🛒`;
-            } else {
-                bar.style.display = 'none';
-            }
-        }
+                {selected.length > 0 && (
+                    <motion.div initial={{ y: 100 }} animate={{ y: 0 }} onClick={() => window.open(`https://wa.me/96598523539?text=أريد طلب: ${selected.join(', ')}`)}
+                        className="fixed bottom-0 w-full bg-[#556b2f] text-white py-6 text-center text-xl font-bold cursor-pointer z-[100] shadow-2xl">
+                        إتمام الطلب ({selected.length}) 🛒
+                    </motion.div>
+                )}
+            </div>
+        );
+    }
 
-        function sendOrder() {
-            let msg = `مرحباً، أود طلب التالي من بساتين:%0A%0A${selectedItems.join('%0A')}%0A%0Aبانتظار تأكيدكم الكريم..🌿`;
-            window.open(`https://wa.me/96598523539?text=${msg}`, '_blank');
-        }
-
-        // تشغيل المتجر
-        initStore();
-    </script>
+    ReactDOM.render(<App />, document.getElementById('root'));
+</script>
 </body>
 </html>
