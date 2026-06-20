@@ -3,56 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بساتين - Basateen</title>
+    <title>بساتين - المتجر المتكامل</title>
     <style>
-        body { font-family: sans-serif; background: #f9fbf7; margin: 0; padding-bottom: 50px; }
-        .sticky-nav { position: sticky; top: 0; background: white; padding: 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .sticky-nav img { width: 140px; }
-        .fancy-title { color: #166534; font-size: 24px; font-weight: bold; margin-top: 5px; }
-        .tabs { display: flex; justify-content: center; gap: 10px; padding: 15px; overflow-x: auto; }
-        .tab-btn { padding: 10px 20px; border-radius: 20px; border: 1px solid #166534; background: white; color: #166534; font-weight: bold; cursor: pointer; }
-        .tab-btn.active { background: #166534; color: white; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .prod-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; font-weight: bold; }
-        .btn-wa { background: #25D366; color: white; border: none; padding: 10px; width: 100%; border-radius: 10px; margin-top: 10px; font-weight: bold; cursor: pointer; }
+        body { font-family: sans-serif; background: #f9fbf7; margin: 0; padding-bottom: 20px; }
+        .sticky-header { position: sticky; top: 0; background: white; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000; }
+        .logo-small { width: 120px; height: auto; border-radius: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; }
+        .prod-box { background: white; padding: 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; font-size: 13px; font-weight: bold; }
+        .btn-wa { background: #25D366; color: white; border: none; padding: 5px; width: 100%; border-radius: 5px; margin-top: 5px; font-size: 11px; cursor: pointer; }
+        .cat-title { font-size: 16px; color: #166534; padding: 15px 10px 5px; font-weight: bold; border-bottom: 2px solid #e2e8f0; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="sticky-nav">
-    <img src="https://k.top4top.io/p_3823l4r0s0.png" alt="بساتين">
-    <div class="fancy-title">بـسـاتـيـن</div>
+<div class="sticky-header">
+    <img src="https://i.top4top.io/p_3823lll7f0.png" class="logo-small">
 </div>
 
-<div class="tabs" id="tabs"></div>
-<div class="grid" id="grid"></div>
+<div id="main-content"></div>
 
 <script>
     const data = {
-        "فواكه": ["موز 🍌", "تفاح 🍎", "برتقال 🍊", "مانجو 🥭", "فراولة 🍓"],
-        "خضروات": ["طماطم 🍅", "خيار 🥒", "جزر 🥕", "خس 🥬", "بصل 🧅"],
-        "صناديق": ["صندوق الخير 🎁", "صندوق الفاكهة 🧺", "صندوق الخضار 📦"]
+        "الفواكه": ["موز 🍌", "تفاح 🍎", "برتقال 🍊", "مانجو 🥭", "فراولة 🍓", "كيوي 🥝", "عنب 🍇", "رمان 🍎", "خوخ 🍑", "أناناس 🍍", "بطيخ 🍉", "كرز 🍒", "إجاص 🍐", "تين 🍏", "توت 🫐"],
+        "الخضروات": ["طماطم 🍅", "خيار 🥒", "جزر 🥕", "خس 🥬", "بصل 🧅", "ثوم 🧄", "فلفل 🫑", "بروكلي 🥦", "بطاطس 🥔", "كوسة 🥒", "باذنجان 🍆", "ذرة 🌽", "فجل 🥕", "ملفوف 🥬", "بقدونس 🌿"]
     };
 
-    function render(cat) {
-        document.getElementById('grid').innerHTML = data[cat].map(item => `
-            <div class="prod-box">
-                <div>${item}</div>
-                <button class="btn-wa" onclick="send('${item}')">طلب واتساب 💬</button>
-            </div>
-        `).join('');
+    const container = document.getElementById('main-content');
+    
+    for (let cat in data) {
+        container.innerHTML += `<div class="cat-title">${cat}</div>`;
+        let grid = document.createElement('div');
+        grid.className = 'grid';
+        data[cat].forEach(item => {
+            grid.innerHTML += `
+                <div class="prod-box">
+                    <div>${item}</div>
+                    <button class="btn-wa" onclick="send('${item}')">طلب 💬</button>
+                </div>
+            `;
+        });
+        container.appendChild(grid);
     }
 
     function send(item) {
-        window.open(`https://wa.me/96598523539?text=أريد طلب: ${item} من متجر بساتين`, '_blank');
+        let msg = `مرحباً، أود طلب ${item} من متجر بساتين، بانتظار تأكيدكم..🌿`;
+        window.open(`https://wa.me/96598523539?text=${encodeURIComponent(msg)}`, '_blank');
     }
-
-    const tabs = document.getElementById('tabs');
-    Object.keys(data).forEach((cat, i) => {
-        tabs.innerHTML += `<button class="tab-btn ${i==0?'active':''}" onclick="render('${cat}'); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active')">${cat}</button>`;
-    });
-
-    render('فواكه');
 </script>
 </body>
 </html>
