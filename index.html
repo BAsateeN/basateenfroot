@@ -6,77 +6,71 @@
     <title>بساتين - الفخامة الطازجة</title>
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Almarai', sans-serif; background-color: #f4f7f2; margin: 0; padding: 0; }
+        :root { --olive: #556b2f; --gold: #c5a059; }
+        body { font-family: 'Almarai', sans-serif; background-color: #fdfdf5; margin: 0; padding-bottom: 100px; }
         
-        /* البانر العلوي (الأخضر والأبيض) */
-        .hero-header { 
-            background-color: #166534; 
-            padding: 40px 20px; 
-            text-align: center; 
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .fancy-text { 
-            font-size: 60px; 
-            font-weight: bold; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3); 
-        }
+        .hero-header { background-color: var(--olive); padding: 40px 20px; text-align: center; color: white; }
+        .fancy-text { font-size: 50px; font-weight: bold; }
+        .top-image { width: 100%; max-width: 400px; display: block; margin: 20px auto; border-radius: 20px; }
 
-        /* شريط التنقل */
-        .navbar { position: sticky; top: 0; background: white; padding: 15px; display: flex; justify-content: space-around; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .nav-link { color: #166534; font-weight: bold; text-decoration: none; }
-
-        /* المنتجات */
-        .product-section { padding: 40px 20px; border-bottom: 1px solid #e0e0e0; }
-        .category-title { font-size: 28px; font-weight: bold; color: #166534; margin: 30px 0; text-align: center; letter-spacing: 2px; }
-        .product-card { background: white; margin-bottom: 40px; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .product-name { font-size: 24px; padding: 25px; text-align: center; font-weight: 700; }
-        .wa-btn { display: block; width: 90%; margin: 0 auto 20px; padding: 20px; background-color: #25D366; color: white; text-align: center; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; }
+        .category-title { font-size: 24px; color: var(--olive); text-align: center; margin: 30px 0; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px; }
+        .product-card { 
+            background: white; padding: 20px; border-radius: 20px; text-align: center; 
+            border: 3px solid transparent; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .product-card.selected { border-color: var(--gold); background: #f9f7e8; }
         
-        /* الصورة في الأسفل */
-        .footer-img { width: 100%; max-width: 400px; display: block; margin: 40px auto; border-radius: 20px; }
+        /* شريط إتمام الطلب */
+        #cart-bar { 
+            position: fixed; bottom: 0; width: 100%; background: var(--olive); color: white; 
+            text-align: center; padding: 20px; font-size: 20px; font-weight: bold; 
+            display: none; cursor: pointer; box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
 
-<div class="hero-header">
-    <div class="fancy-text">بـسـاتـيـن</div>
-</div>
+<div class="hero-header"><div class="fancy-text">بـسـاتـيـن</div></div>
+<img src="https://i.top4top.io/p_3823lll7f0.png" class="top-image">
 
-<nav class="navbar">
-    <a href="#fruits" class="nav-link">الفواكه</a>
-    <a href="#veggies" class="nav-link">الخضروات</a>
-    <a href="https://wa.me/96598523539" class="nav-link">تواصل معنا</a>
-</nav>
+<div id="content"></div>
 
-<div id="fruits"><div class="category-title">فواكه طازجة</div></div>
-<div id="fruit-list"></div>
-
-<div id="veggies"><div class="category-title">خضروات عضوية</div></div>
-<div id="veggie-list"></div>
-
-<img src="https://i.top4top.io/p_3823lll7f0.png" class="footer-img" alt="بساتين">
+<div id="cart-bar" onclick="sendOrder()">إتمام الطلب الآن 🛒</div>
 
 <script>
-    const fruits = ["موز ذهبي 🍌", "تفاح أحمر 🍎", "برتقال عصير 🍊", "مانجو استوائي 🥭", "فراولة ملكية 🍓", "كيوي منعش 🥝", "عنب فاخر 🍇", "رمان طائفي 🍎", "خوخ طري 🍑", "أناناس ناضج 🍍", "بطيخ بارد 🍉", "كرز طازج 🍒", "إجاص فاخر 🍐", "تين طري 🍏", "توت بري 🫐"];
-    const veggies = ["طماطم المزرعة 🍅", "خيار مقرمش 🥒", "جزر طازج 🥕", "خس طازج 🥬", "بصل أحمر 🧅", "ثوم بلدي 🧄", "فلفل بارد 🫑", "بروكلي طازج 🥦", "بطاطس جبلية 🥔", "كوسة طرية 🥒", "باذنجان أسود 🍆", "ذرة حلوة 🌽", "فجل أحمر 🥕", "ملفوف أخضر 🥬", "بقدونس طازج 🌿"];
+    const store = {
+        "الفواكه": ["موز 🍌", "تفاح 🍎", "برتقال 🍊", "مانجو 🥭", "فراولة 🍓"],
+        "الخضروات": ["طماطم 🍅", "خيار 🥒", "جزر 🥕", "خس 🥬", "بصل 🧅"],
+        "صناديق": ["صندوق العائلة 🎁", "صندوق الضيافة 🧺", "صندوق العيد 📦"]
+    };
 
-    function render(list, id) {
-        const container = document.getElementById(id);
-        list.forEach(item => {
-            container.innerHTML += `
-                <div class="product-section">
-                    <div class="product-card">
-                        <div class="product-name">${item}</div>
-                        <a href="https://wa.me/96598523539?text=مرحباً، أود طلب ${item} من بساتين، بانتظار تأكيدكم.." class="wa-btn">طلب عبر واتساب 💬</a>
-                    </div>
-                </div>
-            `;
+    let selectedItems = [];
+    const content = document.getElementById('content');
+
+    for (let cat in store) {
+        content.innerHTML += `<div class="category-title">${cat}</div>`;
+        let grid = document.createElement('div');
+        grid.className = 'grid';
+        store[cat].forEach(item => {
+            let div = document.createElement('div');
+            div.className = 'product-card';
+            div.innerText = item;
+            div.onclick = () => {
+                div.classList.toggle('selected');
+                if(div.classList.contains('selected')) selectedItems.push(item);
+                else selectedItems = selectedItems.filter(i => i !== item);
+                document.getElementById('cart-bar').style.display = selectedItems.length > 0 ? 'block' : 'none';
+            };
+            grid.appendChild(div);
         });
+        content.appendChild(grid);
     }
 
-    render(fruits, 'fruit-list');
-    render(veggies, 'veggie-list');
+    function sendOrder() {
+        let msg = `مرحباً، أود طلب: ${selectedItems.join(', ')} من بساتين. بانتظار تأكيدكم..🌿`;
+        window.open(`https://wa.me/96598523539?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 </script>
 </body>
 </html>
