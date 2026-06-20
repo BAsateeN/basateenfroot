@@ -3,63 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بساتين - الفخامة المتكاملة</title>
+    <title>بساتين - الفخامة الطازجة</title>
     <style>
         :root { --olive: #556b2f; --gold: #c5a059; --bg: #fdfdf5; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; }
 
         /* صفحة الترحيب */
-        #welcome-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--olive); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; color: white; }
-        .farmer-img { font-size: 80px; animation: bounce 2s infinite; margin-bottom: 20px; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        .shop-btn { padding: 20px 50px; background: var(--gold); color: white; font-size: 24px; border-radius: 50px; border: none; cursor: pointer; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        #welcome-page { position: fixed; top:0; left:0; width: 100%; height: 100%; background: var(--olive); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; color: white; padding: 20px; text-align: center; }
+        .shop-btn { padding: 20px 50px; background: var(--gold); border-radius: 50px; border: none; font-size: 24px; cursor: pointer; color: white; font-weight: bold; margin-top: 20px; }
 
         /* المتجر */
-        #main-app { display: none; padding-bottom: 100px; }
-        .hero { background: var(--olive); padding: 30px; text-align: center; color: white; border-bottom: 5px solid var(--gold); }
-        .nav-bar { position: sticky; top: 0; background: white; padding: 15px; display: flex; justify-content: center; gap: 10px; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .nav-btn { padding: 10px 15px; border-radius: 20px; border: 1px solid var(--olive); color: var(--olive); font-weight: bold; cursor: pointer; background: white; }
+        #main-app { display: none; padding-bottom: 120px; }
+        .hero { background: var(--olive); padding: 20px; text-align: center; color: white; }
+        .banner { width: 90%; max-width: 600px; display: block; margin: 20px auto; border-radius: 15px; border: 3px solid var(--gold); }
+        .nav-bar { position: sticky; top: 0; background: white; padding: 15px; display: flex; justify-content: center; gap: 10px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-wrap: wrap; }
+        .nav-btn { padding: 10px 15px; border-radius: 15px; border: 1px solid var(--olive); color: var(--olive); font-weight: bold; cursor: pointer; background: white; }
         .nav-btn.active { background: var(--olive); color: white; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .card { background: white; padding: 15px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .btn-order { background: var(--olive); color: white; border: none; padding: 10px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        @media (min-width: 768px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+        
+        .card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 14px; border: 2px solid #eee; cursor: pointer; }
+        .card.selected { border-color: var(--gold); background: #fdfdf5; }
+        #checkout-bar { position: fixed; bottom: 0; width: 100%; background: var(--olive); color: white; text-align: center; padding: 15px; font-weight: bold; display: none; z-index: 2000; cursor: pointer; font-size: 18px; }
     </style>
 </head>
 <body>
 
     <div id="welcome-page">
-        <div class="farmer-img">👨‍🌾</div>
+        <div style="font-size: 80px;">👨‍🌾</div>
+        <div style="font-size: 28px; font-weight: bold;">مرحباً بك في عالم بـسـاتـيـن</div>
         <button class="shop-btn" onclick="startShopping()">تسوق الآن</button>
     </div>
 
     <div id="main-app">
         <header class="hero"><h1>بـسـاتـيـن</h1></header>
+        <img src="https://i.top4top.io/p_3823lll7f0.png" class="banner">
+        
         <nav class="nav-bar" id="nav">
             <button class="nav-btn active" onclick="render('الكل', this)">الكل</button>
+            <button class="nav-btn" onclick="render('صناديق', this)">صناديق</button>
             <button class="nav-btn" onclick="render('فواكه', this)">فواكه</button>
             <button class="nav-btn" onclick="render('خضروات', this)">خضروات</button>
         </nav>
         <div class="grid" id="grid"></div>
+        <div id="checkout-bar" onclick="sendOrder()">إتمام الطلب النهائي 🛒</div>
     </div>
 
     <script>
+        let selectedItems = [];
         const products = [
-            {n: "تفاح أخضر 🍏", c: "فواكه"}, {n: "تفاح أحمر 🍎", c: "فواكه"}, {n: "إجاص 🍐", c: "فواكه"}, {n: "برتقال 🍊", c: "فواكه"}, 
-            {n: "بطيخ 🍉", c: "فواكه"}, {n: "موز 🍌", c: "فواكه"}, {n: "ليمون 🍋‍🟩", c: "فواكه"}, {n: "ليمون أصفر 🍋", c: "فواكه"}, 
-            {n: "عنب 🍇", c: "فواكه"}, {n: "فراولة 🍓", c: "فواكه"}, {n: "توت 🫐", c: "فواكه"}, {n: "شمام 🍈", c: "فواكه"}, 
-            {n: "أناناس 🍍", c: "فواكه"}, {n: "مانجو 🥭", c: "فواكه"}, {n: "خوخ 🍑", c: "فواكه"}, {n: "كرز 🍒", c: "فواكه"}, 
-            {n: "كيوي 🥝", c: "فواكه"}, {n: "طماطم 🍅", c: "خضروات"}, {n: "باذنجان 🍆", c: "خضروات"}, {n: "خس 🥬", c: "خضروات"}, 
-            {n: "بروكلي 🥦", c: "خضروات"}, {n: "بازلاء 🫛", c: "خضروات"}, {n: "أفوكادو 🥑", c: "خضروات"}, {n: "خيار 🥒", c: "خضروات"}, 
-            {n: "فلفل حار 🌶️", c: "خضروات"}, {n: "فلفل بارد 🫑", c: "خضروات"}, {n: "ذرة 🌽", c: "خضروات"}, {n: "بصل 🧅", c: "خضروات"}, 
-            {n: "ثوم 🧄", c: "خضروات"}, {n: "زيتون 🫒", c: "خضروات"}, {n: "جزر 🥕", c: "خضروات"}, {n: "بطاطس 🥔", c: "خضروات"}, 
-            {n: "بطاطا حلوة 🍠", c: "خضروات"}
+            // صناديق (أول شيء)
+            {n: "صندوق متكامل 🧺", c: "صناديق"}, {n: "صندوق الفواكه 🎁", c: "صناديق"}, {n: "صندوق الخضار 📦", c: "صناديق"},
+            // فواكه
+            {n: "تفاح أخضر 🍏", c: "فواكه"}, {n: "تفاح أحمر 🍎", c: "فواكه"}, {n: "إجاص 🍐", c: "فواكه"}, {n: "برتقال 🍊", c: "فواكه"}, {n: "بطيخ 🍉", c: "فواكه"},
+            {n: "موز 🍌", c: "فواكه"}, {n: "ليمون أخضر 🍋‍🟩", c: "فواكه"}, {n: "عنب 🍇", c: "فواكه"}, {n: "فراولة 🍓", c: "فواكه"}, {n: "توت 🫐", c: "فواكه"},
+            {n: "شمام 🍈", c: "فواكه"}, {n: "أناناس 🍍", c: "فواكه"}, {n: "مانجو 🥭", c: "فواكه"}, {n: "خوخ 🍑", c: "فواكه"}, {n: "كرز 🍒", c: "فواكه"}, {n: "كيوي 🥝", c: "فواكه"},
+            // خضروات
+            {n: "طماطم 🍅", c: "خضروات"}, {n: "باذنجان 🍆", c: "خضروات"}, {n: "خس 🥬", c: "خضروات"}, {n: "بروكلي 🥦", c: "خضروات"},
+            {n: "بازلاء 🫛", c: "خضروات"}, {n: "أفوكادو 🥑", c: "خضروات"}, {n: "خيار 🥒", c: "خضروات"}, {n: "فلفل حار 🌶️", c: "خضروات"}, {n: "فلفل بارد 🫑", c: "خضروات"},
+            {n: "ذرة 🌽", c: "خضروات"}, {n: "بصل 🧅", c: "خضروات"}, {n: "ثوم 🧄", c: "خضروات"}, {n: "زيتون 🫒", c: "خضروات"}, {n: "جزر 🥕", c: "خضروات"},
+            {n: "بطاطس 🥔", c: "خضروات"}, {n: "بطاطا حلوة 🍠", c: "خضروات"}
         ];
 
         function startShopping() {
             document.getElementById('welcome-page').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             render('الكل');
+        }
+
+        function toggleSelect(name, card) {
+            if(selectedItems.includes(name)) {
+                selectedItems = selectedItems.filter(i => i !== name);
+                card.classList.remove('selected');
+            } else {
+                selectedItems.push(name);
+                card.classList.add('selected');
+            }
+            document.getElementById('checkout-bar').style.display = selectedItems.length > 0 ? 'block' : 'none';
+            document.getElementById('checkout-bar').innerText = `إتمام الطلب النهائي (${selectedItems.length}) 🛒`;
         }
 
         function render(cat, btn) {
@@ -70,17 +92,17 @@
             const grid = document.getElementById('grid');
             grid.innerHTML = "";
             products.filter(i => cat === 'الكل' || i.c === cat).forEach(item => {
+                const isSelected = selectedItems.includes(item.n);
                 grid.innerHTML += `
-                    <div class="card">
-                        <div style="font-weight:bold; margin-bottom:10px">${item.n}</div>
-                        <button class="btn-order" onclick="order('${item.n}')">إتمام الطلب 🛒</button>
+                    <div class="card ${isSelected ? 'selected' : ''}" onclick="toggleSelect('${item.n}', this)">
+                        <div>${item.n}</div>
                     </div>
                 `;
             });
         }
 
-        function order(name) {
-            window.open(`https://wa.me/96598523539?text=أريد طلب: ${name} من بساتين.`);
+        function sendOrder() {
+            window.open(`https://wa.me/96598523539?text=أريد طلب: ${selectedItems.join(', ')} من بساتين.`);
         }
     </script>
 </body>
