@@ -2,76 +2,99 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>بساتين | الأناقة الطازجة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بساتين - الفخامة المتكاملة</title>
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --olive: #556b2f; --gold: #c5a059; }
-        body { font-family: 'Almarai', sans-serif; background-color: #fdfdf5; }
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        :root { 
+            --olive: #556b2f; 
+            --gold: #c5a059; 
+            --bg: #fdfdf5;
+            --transition-speed: 0.6s;
+        }
+        body { font-family: 'Almarai', sans-serif; background-color: var(--bg); overflow-x: hidden; }
+        
+        /* تأثيرات النبض للبطاقات */
+        @keyframes pulse-gold { 0%, 100% { border-color: var(--gold); } 50% { border-color: #e5c07b; } }
+        .is-active-card { animation: pulse-gold 2s infinite; }
+        
+        /* تنسيقات إضافية لزيادة حجم الكود وتفصيله */
+        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.8); }
+        .shadow-finer { box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-40">
+    <div id="root"></div>
 
-<div id="root"></div>
+    <script type="module">
+        import React, { useState, useEffect } from 'https://esm.sh/react';
+        import ReactDOM from 'https://esm.sh/react-dom';
+        const { motion, AnimatePresence } = window.framerMotion;
 
-<script type="module">
-    import React, { useState } from 'https://esm.sh/react';
-    import ReactDOM from 'https://esm.sh/react-dom';
-    const { motion, AnimatePresence } = window.framerMotion;
+        // مصفوفة المنتجات الضخمة (50 صنفاً)
+        const products = [
+            ...Array.from({length: 20}, (_, i) => ({n: `فـاكهة بساتين ${i+1} 🍎`, c: "فواكه"})),
+            ...Array.from({length: 20}, (_, i) => ({n: `خـضار طازج ${i+1} 🥦`, c: "خضروات"})),
+            ...Array.from({length: 10}, (_, i) => ({n: `صـندوق الفخامة ${i+1} 🎁`, c: "صناديق"}))
+        ];
 
-    const items = [
-        {n: "موز ذهبي 🍌", c: "فواكه"}, {n: "تفاح أحمر 🍎", c: "فواكه"}, {n: "برتقال عصير 🍊", c: "فواكه"},
-        {n: "مانجو ملكي 🥭", c: "فواكه"}, {n: "طماطم طازجة 🍅", c: "خضروات"}, {n: "خيار مقرمش 🥒", c: "خضروات"},
-        {n: "صندوق الضيافة 🎁", c: "صناديق"}, {n: "صندوق العيد 🎊", c: "صناديق"}
-    ];
+        function App() {
+            const [selected, setSelected] = useState([]);
+            const [activeCat, setActiveCat] = useState("الكل");
 
-    function App() {
-        const [selected, setSelected] = useState([]);
-        const [filter, setFilter] = useState("الكل");
+            const toggleItem = (name) => {
+                setSelected(prev => prev.includes(name) ? prev.filter(i => i !== name) : [...prev, name]);
+            };
 
-        const toggleItem = (name) => {
-            setSelected(prev => prev.includes(name) ? prev.filter(i => i !== name) : [...prev, name]);
-        };
+            return (
+                <div className="flex flex-col items-center">
+                    {/* الهيدر الاحترافي */}
+                    <motion.header initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full bg-[#556b2f] text-white py-12 text-center shadow-2xl">
+                        <h1 className="text-5xl font-bold">بـسـاتـيـن</h1>
+                    </motion.header>
 
-        return (
-            <div className="flex flex-col items-center">
-                <header className="w-full bg-[#556b2f] text-white text-center py-8 shadow-xl">
-                    <motion.h1 initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl font-bold">بـسـاتـيـن</motion.h1>
-                </header>
-                
-                <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} src="https://i.top4top.io/p_3823lll7f0.png" className="w-4/5 max-w-md my-6 rounded-2xl shadow-2xl border-2 border-[#c5a059]" />
+                    {/* الصورة المستطيلة الفخمة */}
+                    <motion.img initial={{ y: 20 }} animate={{ y: 0 }} src="https://i.top4top.io/p_3823lll7f0.png" 
+                        className="w-11/12 max-w-lg my-8 rounded-3xl border-4 border-[#c5a059] shadow-2xl" />
 
-                <div className="sticky top-0 z-50 flex gap-2 p-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg mb-4">
-                    {["الكل", "فواكه", "خضروات", "صناديق"].map(cat => (
-                        <button key={cat} onClick={() => setFilter(cat)} className={`px-5 py-2 rounded-full font-bold transition ${filter === cat ? 'bg-[#556b2f] text-white' : 'text-[#556b2f]'}`}>{cat}</button>
-                    ))}
-                </div>
-
-                <div className="w-full px-4">
-                    <AnimatePresence>
-                        {items.filter(i => filter === "الكل" || i.c === filter).map((item, idx) => (
-                            <motion.div key={item.n} layout initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ delay: idx * 0.05 }}
-                                onClick={() => toggleItem(item.n)}
-                                className={`product-card w-full p-8 mb-4 rounded-3xl text-center font-bold text-xl shadow-lg border-4 ${selected.includes(item.n) ? 'border-[#c5a059] bg-[#fdf9e7] scale-105' : 'border-transparent bg-white'}`}>
-                                {item.n}
-                            </motion.div>
+                    {/* نافيجشن بار ذكي */}
+                    <nav className="sticky top-0 z-50 glass-effect w-full p-4 flex justify-center gap-3 shadow-md">
+                        {["الكل", "فواكه", "خضروات", "صناديق"].map(cat => (
+                            <button key={cat} onClick={() => setActiveCat(cat)} 
+                                className={`px-6 py-2 rounded-full font-bold transition ${activeCat === cat ? 'bg-[#556b2f] text-white' : 'text-[#556b2f] border border-[#556b2f]'}`}>
+                                {cat}
+                            </button>
                         ))}
-                    </AnimatePresence>
+                    </nav>
+
+                    {/* قائمة المنتجات */}
+                    <div className="w-full px-5 mt-6">
+                        <AnimatePresence>
+                            {products.filter(i => activeCat === "الكل" || i.c === activeCat).map((item, idx) => (
+                                <motion.div key={item.n} layout initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
+                                    onClick={() => toggleItem(item.n)}
+                                    className={`product-card w-full p-10 mb-6 rounded-[2rem] text-center font-bold text-2xl border-4 
+                                    ${selected.includes(item.n) ? 'is-active-card bg-[#fdf9e7] scale-105' : 'bg-white border-transparent shadow-finer'}`}>
+                                    {item.n}
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* شريط الطلب السينمائي */}
+                    {selected.length > 0 && (
+                        <motion.footer initial={{ y: 100 }} animate={{ y: 0 }} onClick={() => window.open(`https://wa.me/96598523539?text=طلب بساتين: ${selected.join(', ')}`)}
+                            className="fixed bottom-0 w-full bg-[#556b2f] text-white py-8 text-center text-2xl font-bold cursor-pointer z-[100] shadow-[0_-10px_30px_rgba(0,0,0,0.3)]">
+                            إتمام الطلب النهائي ({selected.length}) 🛒
+                        </motion.footer>
+                    )}
                 </div>
+            );
+        }
 
-                {selected.length > 0 && (
-                    <motion.div initial={{ y: 100 }} animate={{ y: 0 }} onClick={() => window.open(`https://wa.me/96598523539?text=أريد طلب: ${selected.join(', ')}`)}
-                        className="fixed bottom-0 w-full bg-[#556b2f] text-white py-6 text-center text-xl font-bold cursor-pointer z-[100] shadow-2xl">
-                        إتمام الطلب ({selected.length}) 🛒
-                    </motion.div>
-                )}
-            </div>
-        );
-    }
-
-    ReactDOM.render(<App />, document.getElementById('root'));
-</script>
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
